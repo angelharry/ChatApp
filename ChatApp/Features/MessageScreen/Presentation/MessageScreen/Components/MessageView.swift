@@ -15,6 +15,10 @@ struct MessageView: View {
                 text: "That’s all it takes to build a custom view. Simple and easy! I've covered just what you need to know.",
                 time :"7:15 am"
             )
+            TextMessageView(
+                text: " and easy! I've covered just what you need to know.",
+                time :"7:18 am"
+            )
         }
         .padding()
     }
