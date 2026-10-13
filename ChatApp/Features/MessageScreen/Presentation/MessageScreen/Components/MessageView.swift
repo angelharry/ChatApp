@@ -19,6 +19,10 @@ struct MessageView: View {
                 text: " and easy! I've covered just what you need to know.",
                 time :"7:18 am"
             )
+            TextMessageView(
+                text: "I've covered just what you need to know.",
+                time :"7:20 am"
+            )
         }
         .padding()
     }
