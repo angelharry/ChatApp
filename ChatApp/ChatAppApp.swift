@@ -10,6 +10,8 @@ import SwiftData
 
 @main
 struct ChatAppApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
@@ -22,7 +24,7 @@ struct ChatAppApp: App {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }()
-
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
