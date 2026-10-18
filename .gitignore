@@ -27,3 +27,7 @@ Files.localized
 
 # CocoaPods (Uncomment if you want to download pods fresh on every machine)
 # Pods/
+
+# Firebase Configuration Files
+**/google-services.json
+**/GoogleService-Info.plist
