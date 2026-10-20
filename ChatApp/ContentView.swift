@@ -7,13 +7,24 @@
 
 import SwiftUI
 import SwiftData
+import FirebaseAuth
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
+  
+    @StateObject private var auth = AuthViewModel()
 
     var body: some View {
-        LoginScreen()
+        if let user = auth.user {
+            VStack(spacing: 16) {
+                Text("Signed in as \(user.email ?? user.phoneNumber ?? "")")
+                Button("Sign Out") { auth.signOut()}
+            }
+        } else {
+            LoginScreen(auth: auth)
+        }
+        
         
 //        MessageScreenView(message: "")
         

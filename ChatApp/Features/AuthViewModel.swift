@@ -2,7 +2,7 @@
 //  AuthViewModel.swift
 //  ChatApp
 //
-//  Created by Amitha George on 10/16/26.
+//  Created by Anju on 10/16/26.
 //
 
 import SwiftUI
@@ -11,8 +11,10 @@ import Combine
 
 @MainActor
 final class AuthViewModel: ObservableObject {
+    
     @Published var user: User?
     @Published var errorMessage: String?
+    @Published var verificationID: String?
     private var handle: AuthStateDidChangeListenerHandle?
 
     init() {
@@ -36,6 +38,21 @@ final class AuthViewModel: ObservableObject {
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+    
+    func sendCode(to phoneNumber: String) async {
+        do {
+            verificationID = try await PhoneAuthProvider.provider()
+                .verifyPhoneNumber(phoneNumber, uiDelegate: nil)
+        } catch { errorMessage = error.localizedDescription }
+    }
+    
+    func verifyCode(_ code: String) async {
+        guard let verificationID else { return }
+        let credential = PhoneAuthProvider.provider()
+            .credential(withVerificationID: verificationID, verificationCode: code)
+        do { try await Auth.auth().signIn(with: credential) }
+        catch { errorMessage = error.localizedDescription }
     }
 
     func signOut() {
