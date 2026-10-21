@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 import FirebaseAuth
 
+//intilial flickering to login screen before message screen flow? check?
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
@@ -19,12 +20,9 @@ struct ContentView: View {
     var body: some View {
         if let _ = auth.user {//if auth.isLoggedIn {
             VStack(spacing: 16) {
-                Button("Sign Out") { auth.signOut()}
-                
-//                TextField("Search UserId", text: $userName)
                 ThreadScreenView()
-
-               // MessageScreenView(otherUserId: "MQAk2OBswzgEhFiY0b4Osa0sITH3_PATWt8KjMvMK223slonZnQgORbO2")
+                Spacer()
+                Button("Sign Out") { auth.signOut()} //hide on message screen
             }
         } else {
             LoginScreen(auth: auth)
