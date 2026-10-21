@@ -8,6 +8,7 @@
 import SwiftUI
 import FirebaseAuth
 import Combine
+import FirebaseFirestore
 
 @MainActor
 final class AuthViewModel: ObservableObject {
@@ -16,13 +17,22 @@ final class AuthViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var verificationID: String?
     private var handle: AuthStateDidChangeListenerHandle?
-
+        
+    @Published private(set) var isLoggedIn = Auth.auth().currentUser != nil
+    
     init() {
-        // Keeps UI in sync with login state, including after app relaunch
-        handle = Auth.auth().addStateDidChangeListener { [weak self] _, user in
-            self?.user = user
+            handle = Auth.auth().addStateDidChangeListener { [weak self] _, user in
+                self?.user = user
+                
+                let loggedIn = user != nil
+                Task { @MainActor [weak self] in
+                    self?.isLoggedIn = loggedIn
+                    if loggedIn { await self?.saveUser() }
+                }
+            }
+            if isLoggedIn { Task { await saveUser() } }
         }
-    }
+
 
     func signUp(email: String, password: String) async {
         do {
@@ -63,4 +73,16 @@ final class AuthViewModel: ObservableObject {
     func resetPassword(email: String) async {
         try? await Auth.auth().sendPasswordReset(withEmail: email)
     }
+    
+    private func saveUser() async {
+            guard let user = Auth.auth().currentUser else { return }
+            do {
+                try await Firestore.firestore().collection("users").document(user.uid).setData([
+                    "name": user.displayName ?? user.email ?? "Unknown",
+                    "email": user.email ?? ""
+                ], merge: true)
+            } catch {
+                print("saveUser failed: \(error)")
+            }
+        }
 }

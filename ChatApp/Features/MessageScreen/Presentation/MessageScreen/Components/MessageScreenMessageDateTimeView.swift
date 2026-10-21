@@ -1,24 +1,24 @@
+////
+////  MessageScreenMessageDateTimeView.swift
+////  ChatApp
+////
+////  Created by Anju on 10/11/26.
+////
 //
-//  MessageScreenMessageDateTimeView.swift
-//  ChatApp
+//import SwiftUI
 //
-//  Created by Anju on 10/11/26.
+//struct MessageScreenMessageDateTimeView: View {
+//    var dateTimeOfMessage: String
+//    
+//    var body: some View {
+//        HStack {
+//            Text(dateTimeOfMessage)
+//                .font(.caption)
+//                .foregroundStyle(.secondary)
+//        }
+//    }
+//}
 //
-
-import SwiftUI
-
-struct MessageScreenMessageDateTimeView: View {
-    var dateTimeOfMessage: String
-    
-    var body: some View {
-        HStack {
-            Text(dateTimeOfMessage)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
-    }
-}
-
-#Preview {
-    MessageScreenMessageDateTimeView(dateTimeOfMessage : "Nov 30, 2023, 9:41 AM")
-}
+//#Preview {
+//    MessageScreenMessageDateTimeView(dateTimeOfMessage : "Nov 30, 2023, 9:41 AM")
+//}
