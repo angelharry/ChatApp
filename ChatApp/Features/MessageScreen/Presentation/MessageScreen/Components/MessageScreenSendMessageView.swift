@@ -5,7 +5,7 @@
 ////  Created by Anju on 10/11/26.
 ////
 //
-//import SwiftUI
+import SwiftUI
 //
 //struct MessageScreenSendMessageView: View {
 //    @State private var draft = ""
@@ -55,3 +55,30 @@
 //    @Previewable @State var message = ""
 //    MessageScreenSendMessageView(vm: $message, onMicTap: { print("Start recording") }, onPhotoTap: { print("Open photo library") })
 //}
+
+
+struct InputBar:  View {
+    @Binding var text: String
+    let canSend: Bool
+    let onSend: () -> Void
+    @FocusState private var isFocused: Bool
+    
+    var body: some View {
+        HStack(alignment: .bottom, spacing: 8) {
+            TextField("Message...", text: $text, axis: .vertical)
+                .lineLimit(1...5)
+                .focused($isFocused)
+                .padding(10)
+                .background(Color(.systemGray6))
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+            
+            Button(action: onSend) {
+                Image(systemName: "arrow.up.circle.fill")
+                    .font(.system(size: 32))
+            }
+            .disabled(!canSend)
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+    }
+}

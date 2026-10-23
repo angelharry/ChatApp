@@ -10,12 +10,14 @@ import SwiftUI
 struct ThreadScreenView: View {
 
     @StateObject private var vm = ThreadScreenViewModel()
+    let chatFeature = ChatFeature(session: FirebaseSessionProvider())
+
 
     var body: some View {
         NavigationStack {
             List(vm.rows) { row in
-                NavigationLink {
-                    MessageScreenView(otherUserId: row.otherUserId)
+                NavigationLink() {
+                    chatFeature.makeView(otherUserId: row.otherUserId)
                 } label: {
                     ChatRowView(
                         name: vm.name(for: row.otherUserId),

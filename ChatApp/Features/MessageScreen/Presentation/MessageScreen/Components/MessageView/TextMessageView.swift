@@ -5,7 +5,7 @@
 ////  Created by Anju on 10/12/26.
 ////
 //
-//import SwiftUI
+import SwiftUI
 //
 //struct TextMessageView: View {
 //    let message: Message
@@ -58,3 +58,31 @@
 //    )
 //    .padding()
 //}
+
+struct MessageBubble: View {
+    let message: Message
+    let isMine: Bool
+    
+    var body: some View{
+        HStack{
+            if isMine {
+                Spacer(minLength: 50)
+            }
+            VStack(alignment: isMine ? .trailing : .leading, spacing: 2) {
+                Text(message.text)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(isMine ? Color.blue : Color(.systemGray5))
+                    .foregroundStyle(isMine ? .white : .primary)
+                    .clipShape(RoundedRectangle(cornerRadius: 18))
+                
+                Text(message.date, style: .time)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            if !isMine {
+                Spacer(minLength: 50)
+            }
+        }
+    }
+}

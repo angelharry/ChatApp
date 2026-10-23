@@ -10,8 +10,12 @@ import FirebaseAuth
 import Combine
 import FirebaseFirestore
 
+//provide relevent user name for : "name": user.displayName ?? user.email ?? "Unknown",
+
 @MainActor
 final class AuthViewModel: ObservableObject {
+    
+
     
     @Published var user: User?
     @Published var errorMessage: String?
@@ -86,3 +90,5 @@ final class AuthViewModel: ObservableObject {
             }
         }
 }
+
+

@@ -11,25 +11,31 @@ import SwiftUI
 struct MessageScreenView: View {
 
     @StateObject private var vm: MessageScreenViewModel
-    @State private var draft = ""
-    @FocusState private var isInputFocused: Bool
+//    @State private var draft = ""
+//    @FocusState private var isInputFocused: Bool
     
-    init(otherUserId: String) {
-        _vm = StateObject(wrappedValue: MessageScreenViewModel(otherUserId: otherUserId))
+//    init(otherUserId: String) {
+//        _vm = StateObject(wrappedValue: MessageScreenViewModel(otherUserId: otherUserId))
+//    }
+    
+    init(viewModel: @autoclosure @escaping () -> MessageScreenViewModel) {
+        _vm = StateObject(wrappedValue: viewModel())
     }
     
     var body: some View {
         VStack(spacing: 0) {
             messagesList
             Divider()
-            inputBar
+            InputBar(text: $vm.draft, canSend: vm.canSend, onSend: vm.sendTapped)
         }
         .navigationTitle("Chat")
         .navigationBarTitleDisplayMode(.inline)
-       // .task { await vm.fetchMessages() }
-        .onAppear { vm.startListening() } //use more efiicent way
-        .onDisappear { vm.stopListening() }
-        .alert("Error", isPresented: .constant(vm.errorMessage != nil)) {
+//        .onAppear { vm.startListening() } //use more efiicent way
+//        .onDisappear { vm.stopListening() }
+        .task {
+            await vm.startObserving()
+        }
+        .alert("Error", isPresented: errorBinding) {
             Button("Ok") {vm.errorMessage = nil}
         } message: {
             Text(vm.errorMessage ?? "")
@@ -59,53 +65,34 @@ struct MessageScreenView: View {
         }
     }
     
-    private var inputBar: some View {
-        HStack(alignment: .bottom, spacing: 8) {
-            TextField("Message...", text: $draft, axis: .vertical)
-               .lineLimit(1...5)
-               .focused($isInputFocused)
-               .padding(10)
-               .background(Color(.systemGray6))
-               .clipShape(RoundedRectangle(cornerRadius: 20))
-
-           Button {
-               vm.send(draft)
-               draft = ""
-           } label: {
-                Image(systemName: "arrow.up.circle.fill")
-                   .font(.system(size: 32))
-           }
-           .disabled(draft.trimmingCharacters(in: .whitespaces).isEmpty)
-        }
-        .padding(.horizontal)
-        .padding(.vertical, 8)
-    }
+    private var errorBinding: Binding<Bool> {
+           Binding(
+               get: { vm.errorMessage != nil },
+               set: { if !$0 { vm.errorMessage = nil } }
+           )
+       }
+//    
+//    private var inputBar: some View {
+//        HStack(alignment: .bottom, spacing: 8) {
+//            TextField("Message...", text: $draft, axis: .vertical)
+//               .lineLimit(1...5)
+//               .focused($isInputFocused)
+//               .padding(10)
+//               .background(Color(.systemGray6))
+//               .clipShape(RoundedRectangle(cornerRadius: 20))
+//
+//           Button {
+//               vm.send(draft)
+//               draft = ""
+//           } label: {
+//                Image(systemName: "arrow.up.circle.fill")
+//                   .font(.system(size: 32))
+//           }
+//           .disabled(draft.trimmingCharacters(in: .whitespaces).isEmpty)
+//        }
+//        .padding(.horizontal)
+//        .padding(.vertical, 8)
+//    }
 }
 
-struct MessageBubble: View {
-    let message: Message
-    let isMine: Bool
-    
-    var body: some View{
-        HStack{
-            if isMine {
-                Spacer(minLength: 50)
-            }
-            VStack(alignment: isMine ? .trailing : .leading, spacing: 2) {
-                Text(message.text)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(isMine ? Color.blue : Color(.systemGray5))
-                    .foregroundStyle(isMine ? .white : .primary)
-                    .clipShape(RoundedRectangle(cornerRadius: 18))
-                
-                Text(message.date, style: .time)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-            }
-            if !isMine {
-                Spacer(minLength: 50)
-            }
-        }
-    }
-}
+
